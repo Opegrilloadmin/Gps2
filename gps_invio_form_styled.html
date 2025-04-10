@@ -1,0 +1,75 @@
+
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Invio Posizione GPS</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+      text-align: center;
+      padding: 2em;
+      color: #333;
+    }
+    .card {
+      background: white;
+      padding: 2em;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      display: inline-block;
+      max-width: 400px;
+      margin: auto;
+    }
+    h2 {
+      color: #2c3e50;
+    }
+    .status {
+      font-size: 1.2em;
+      margin-top: 1em;
+    }
+    .success {
+      color: #27ae60;
+    }
+    .error {
+      color: #e74c3c;
+    }
+    .loading {
+      color: #2980b9;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Invio della tua posizione GPS</h2>
+    <p class="status loading" id="status">Sto cercando la tua posizione...</p>
+  </div>
+
+  <script>
+    const formUrl = "https://docs.google.com/forms/d/e/1FAIpQLSefwDwRAc8fJBECFiz1MfR9nazBANQGT_i8JKB5uH_zXr4qWg/formResponse";
+    const latField = "entry.1683986351";
+    const lonField = "entry.1253671816";
+
+    const statusEl = document.getElementById("status");
+
+    navigator.geolocation.getCurrentPosition(function(position) {
+      const lat = position.coords.latitude;
+      const lon = position.coords.longitude;
+
+      const submitUrl = `${formUrl}?${latField}=${lat}&${lonField}=${lon}`;
+
+      const iframe = document.createElement("iframe");
+      iframe.style.display = "none";
+      iframe.src = submitUrl;
+      document.body.appendChild(iframe);
+
+      statusEl.className = "status success";
+      statusEl.innerHTML = `Posizione inviata con successo:<br><strong>Lat:</strong> ${lat}<br><strong>Lon:</strong> ${lon}`;
+    }, function(error) {
+      statusEl.className = "status error";
+      statusEl.textContent = "Errore: impossibile ottenere la posizione GPS.";
+    });
+  </script>
+</body>
+</html>
